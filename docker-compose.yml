@@ -1,11 +1,16 @@
 version: '3.8'
 
 services:
-  reserva-api:
+  reservas-api:
     build: .
     ports:
-      - "5003:5003"  
+      - "5003:5003"
     volumes:
       - .:/app
     environment:
-      - FLASK_DEBUG=1
+      FLASK_APP: app.py
+      FLASK_ENV: development
+      DATABASE_URL: sqlite:////app/reservas.db
+      C1_API_URL: http://host.docker.internal:5002/api
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
