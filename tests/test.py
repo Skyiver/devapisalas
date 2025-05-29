@@ -1,7 +1,8 @@
 import pytest
 from unittest.mock import patch
 from flask import Flask
-from models.reserva import db, Reserva
+from models.reserva import db, Reserva  
+from routes.reserva_route import reserva_bp
 
 @pytest.fixture
 def app():
@@ -10,20 +11,20 @@ def app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['TESTING'] = True
     
-    from routes.reserva_route import reserva_bp
-    app.register_blueprint(reserva_bp)
-    
     db.init_app(app)
+    app.register_blueprint(reserva_bp, url_prefix='/api')
+    
+    with app.app_context():
+        db.create_all()
+        db.session.query(Reserva).delete()
+        db.session.commit()
+    
     return app
 
 @pytest.fixture
 def client(app):
     with app.test_client() as client:
-        with app.app_context():
-            db.create_all()
         yield client
-        with app.app_context():
-            db.drop_all()
 
 @patch('services.reserva_service.requests.get')
 def test_criar_reserva_valida(mock_get, client):
@@ -44,7 +45,7 @@ def test_criar_reserva_valida(mock_get, client):
 def test_conflito_horario(mock_get, client):
     mock_get.return_value.status_code = 200
     
-    # Primeira reserva
+    # -------Reserva -------------
     client.post('/api/reservas', json={
         "turma_id": 2001,
         "sala": "LAB3",
@@ -53,7 +54,7 @@ def test_conflito_horario(mock_get, client):
         "hora_fim": "12:00"
     })
 
-    # Reserva conflitante
+    # ------- Conflito de reserva ----------
     response = client.post('/api/reservas', json={
         "turma_id": 2002,
         "sala": "LAB3",
