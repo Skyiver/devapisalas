@@ -26,7 +26,7 @@ A API de Reserva de Salas é um **microsserviço** que faz parte de um sistema m
 
 ## ▶️ Como Executar a API
 ### Pré-requisitos:
--Docker instalado
+- Docker instalado
 - Sistema de Gerenciamento em execução na porta 5002
 
 ### 1. Clone o repositório
