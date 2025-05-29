@@ -1,6 +1,7 @@
 # 📚 API de Reserva de Salas
 
-Este repositório contém a **API de Reserva de Salas**, desenvolvida com **Flask** e **SQLAlchemy**, como parte de uma arquitetura baseada em **microsserviços**.
+## 🔍 Visão Geral
+Este micro serviço tem a responsabilidade de gerenciar as reservas de salas de aula para turmas acadêmicas, conectado ao sistema central de gerenciamento escolar, possibilitando que as instituições educacionais façam reservas de forma eficiente e evitem conflitos de horários.
 
 ## 🧩 Arquitetura
 
@@ -9,36 +10,35 @@ A API de Reserva de Salas é um **microsserviço** que faz parte de um sistema m
 
 ⚠️ **Esta API depende de outra API de Gerenciamento Escolar (School System)**, que deve estar em execução e exposta localmente. A comunicação entre os serviços ocorre via **requisições HTTP REST**, para validar:
 
-- Se a **Turma** existe (`GET /turmas/<id>`)
-- (Opcional) Se o **Aluno** existe (`GET /alunos/<id>`) – pode ser desativado se não usado.
 
 ---
 
 ## 🚀 Tecnologias Utilizadas
 
-- Python 3.x
+- Python 3.10
 - Flask
-- SQLAlchemy
-- SQLite (como banco de dados local)
+- SQLite (banco de dados local)
+- Docker
 - Requests (para consumo da API externa)
+- Pytest (para testes)
 
 ---
 
 ## ▶️ Como Executar a API
+### Pré-requisitos:
+-Docker instalado
+- Sistema de Gerenciamento em execução na porta 5002
 
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/reserva-salas.git
-cd reserva-salas
+git clone https://github.com/Skyiver/devapisalas.git
 ```
 
-### 2. Crie um ambiente virtual (opcional, mas recomendado)
+### 2. Construa e execute o container:
 
 ```bash
-python3 -m venv venv
-source venv/bin/activate  # Linux/macOS
-venv\Scripts\activate     # Windows
+docker-compose up --build
 ```
 
 ### 3. Instale as dependências
@@ -54,7 +54,7 @@ python app.py
 ```
 
 A aplicação estará disponível em:
-📍 `http://localhost:5001`
+📍 `http://localhost:5003`
 
 📝 **Observação:** O banco de dados é criado automaticamente na primeira execução.
 
@@ -62,21 +62,20 @@ A aplicação estará disponível em:
 
 ## 📡 Endpoints Principais
 
-- `GET /reservas` – Lista todas as reservas
-- `POST /reservas` – Cria uma nova reserva
-- `GET /reservas/<id>` – Detalha uma reserva
-- `PUT /reservas/<id>` – Atualiza uma reserva
-- `DELETE /reservas/<id>` – Remove uma reserva
+- `GET /api/reservas` – Lista todas as reservas
+- `POST /api/reservas` – Cria uma nova reserva de sala
+- `GET /api/reservas/<id>` – Obtém uma reserva específica pelo ID
+- `POST /api/reseta` – Apaga todas as reservas
 
 ### Exemplo de corpo JSON para criação:
 
 ```json
 {
   "turma_id": 1,
-  "sala": "101",
-  "data": "2025-05-06",
-  "hora_inicio": "14:00",
-  "hora_fim": "16:00"
+  "sala": "LAB1",
+  "data": "2024-12-01",
+  "hora_inicio": "09:00",
+  "hora_fim": "11:00"
 }
 ```
 
@@ -87,23 +86,52 @@ A aplicação estará disponível em:
 Certifique-se de que a **API de Gerenciamento Escolar** esteja rodando em:
 
 ```
-http://localhost:5000
+http://host.docker.internal:5002
 ```
 
 E que os endpoints de `GET /turmas/<id>` (e opcionalmente `GET /alunos/<id>`) estejam funcionando corretamente para que a validação seja feita com sucesso.
 
 ---
 
+##🧪 Como Executar os Testes:
+
+-Testes Unitários:
+
+```bash
+docker-compose exec reservas-api pytest tests/test.py -v
+```
+
+-Testes de Integração (requer a API de Gestão em execução):
+
+```bash
+docker-compose exec reservas-api pytest tests/test_integracao.py -v
+```
+
 ## 📦 Estrutura do Projeto
 
 ```
 reserva-salas/
+├── app.py                 
+├── config.py             
+├── docker-compose.yml     
+├── Dockerfile             
+├── requirements.txt    
 │
-├── app.py
-├── reserva_model.py
-├── database.py
-├── routes.py
-├── requirements.txt
+├── models/                
+│   └── reserva.py         
+│
+├── routes/             
+│   └── reserva_route.py 
+│
+├── services/              
+│   └── reserva_service.py 
+│
+├── tests/               
+│   ├── test_integracao.py 
+│   └── test.py       
+│
+└── utils/              
+│   └── database.py        
 └── README.md
 ```
 
@@ -111,12 +139,14 @@ reserva-salas/
 
 ## 🛠️ Futuras Melhorias
 
-- Validação de conflito de horário na sala
-- Integração via fila (RabbitMQ) com outros microsserviços
-- Autenticação de usuários
+- Desenvolver interface web para visualização das reservas
+- Implementar busca de reservas por data/sala
+- Implementar autenticação JWT
 
 ---
 
-## 🧑‍💻 Autor
+## 🧑‍💻 Autores
 
-Caio Ireno – Projeto educativo de arquitetura com Flask e microsserviços.
+* Akira Ogassavara (Curso de SI – Impacta)
+* Amanda Costa (Curso de SI – Impacta)
+  
