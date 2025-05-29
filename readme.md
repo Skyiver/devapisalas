@@ -95,13 +95,13 @@ E que os endpoints de `GET /turmas/<id>` (e opcionalmente `GET /alunos/<id>`) es
 
 ##🧪 Como Executar os Testes:
 
--Testes Unitários:
+- Testes Unitários:
 
 ```bash
 docker-compose exec reservas-api pytest tests/test.py -v
 ```
 
--Testes de Integração (requer a API de Gestão em execução):
+- Testes de Integração (requer a API de Gestão em execução):
 
 ```bash
 docker-compose exec reservas-api pytest tests/test_integracao.py -v
