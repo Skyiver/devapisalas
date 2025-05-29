@@ -5,6 +5,14 @@ from utils.database import db
 
 reserva_bp = Blueprint('reserva', __name__, url_prefix='/api')
 
+@reserva_bp.route('/')
+def health_check():
+    return jsonify({
+        "status": "online", 
+        "service": "reservas",
+        "message": "Serviço de reservas operacional"
+    }), 200
+
 @reserva_bp.route('/reservas', methods=['POST'])
 def criar_reserva():
     try:
