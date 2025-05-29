@@ -41,6 +41,8 @@ def test_comunicacao_c1_c2():
         "hora_inicio": "09:00",
         "hora_fim": "11:00"
     }
+    
+    
     response_c2 = requests.post(
         "http://localhost:5003/api/reservas",
         json=reserva_data
